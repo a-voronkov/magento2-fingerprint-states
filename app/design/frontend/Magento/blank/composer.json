@@ -5,8 +5,8 @@
     "sort-packages": true
   },
   "require": {
-    "php": "~8.2.0||~8.3.0||~8.4.0",
-    "mage-os/framework": "2.3.0"
+    "php": "~8.3.0||~8.4.0||~8.5.0",
+    "mage-os/framework": "3.0.0"
   },
   "type": "magento2-theme",
   "license": [
@@ -18,8 +18,8 @@
       "registration.php"
     ]
   },
-  "version": "2.3.0",
+  "version": "3.0.0",
   "replace": {
-    "magento/theme-frontend-blank": "100.4.8-p5"
+    "magento/theme-frontend-blank": "100.4.9"
   }
 }
