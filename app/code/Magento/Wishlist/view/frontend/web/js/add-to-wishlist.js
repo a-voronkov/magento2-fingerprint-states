@@ -1,6 +1,6 @@
 /**
- * Copyright 2014 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 define([
@@ -55,7 +55,7 @@ define([
 
             for (key in options.productType) {
                 if (options.productType.hasOwnProperty(key) && options.productType[key] + 'Info' in options) {
-                    events['addToWishlist ' + options[options.productType[key] + 'Info']] = dataUpdateFunc;
+                    events['change ' + options[options.productType[key] + 'Info']] = dataUpdateFunc;
                 }
             }
             this._on(events);
@@ -73,7 +73,7 @@ define([
             for (key in this.options.productType) {
                 if (this.options.productType.hasOwnProperty(key)
                     && this.options.productType[key] + 'Info' in this.options) {
-                    $(this.options[this.options.productType[key] + 'Info']).trigger('addToWishlist');
+                    $(this.options[this.options.productType[key] + 'Info']).trigger('change');
                 }
             }
         },

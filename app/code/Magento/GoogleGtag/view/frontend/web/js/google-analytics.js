@@ -1,6 +1,6 @@
 /**
- * Copyright 2022 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 /* jscs:disable */
 /* eslint-disable */
@@ -39,7 +39,7 @@ define([
             if (window.gtag) {
                 gtag('config', measurementId, { 'anonymize_ip': true });
                 // Purchase Event
-                if (config.ordersTrackingData.hasOwnProperty('orders')) {
+                if (config.ordersTrackingData.hasOwnProperty('currency')) {
                     var purchaseObject = config.ordersTrackingData.orders[0];
                     purchaseObject['items'] = config.ordersTrackingData.products;
                     gtag('event', 'purchase', purchaseObject);
@@ -55,9 +55,10 @@ define([
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
+                gtag('set', 'developer_id.dYjhlMD', true);
                 gtag('config', measurementId, { 'anonymize_ip': true });
                 // Purchase Event
-                if (config.ordersTrackingData.hasOwnProperty('orders')) {
+                if (config.ordersTrackingData.hasOwnProperty('currency')) {
                     var purchaseObject = config.ordersTrackingData.orders[0];
                     purchaseObject['items'] = config.ordersTrackingData.products;
                     gtag('event', 'purchase', purchaseObject);

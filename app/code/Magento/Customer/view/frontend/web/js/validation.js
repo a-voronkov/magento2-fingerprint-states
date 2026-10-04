@@ -1,8 +1,3 @@
-/**
- * Copyright 2019 Adobe
- * All Rights Reserved.
- */
-
 define([
     'jquery',
     'moment',

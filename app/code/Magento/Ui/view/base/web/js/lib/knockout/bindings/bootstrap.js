@@ -1,6 +1,6 @@
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 define(function (require) {
     'use strict';
@@ -31,7 +31,6 @@ define(function (require) {
         datepicker:     require('./datepicker'),
         outerClick:     require('./outer_click'),
         fadeVisible:    require('./fadeVisible'),
-        dimVisible:    require('./dimVisible'),
         collapsible:    require('./collapsible'),
         staticChecked:  require('./staticChecked'),
         simpleChecked:  require('./simple-checked'),

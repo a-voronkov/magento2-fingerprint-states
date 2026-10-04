@@ -1,6 +1,6 @@
 /**
- * Copyright 2019 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 define([
     'Magento_Ui/js/grid/listing',
@@ -100,6 +100,7 @@ define([
             }
             this.imageMargin = parseInt(this.imageMargin, 10);
             this.container = $('[data-id="' + this.containerId + '"]')[0];
+
             this.setLayoutStyles();
             this.setEventListener();
 
@@ -128,11 +129,8 @@ define([
         /**
          * Set layout styles inside the container
          */
-        setLayoutStyles: function (callback) {
-            var containerWidth, rowImages, ratio, rowHeight, calcHeight, isLastRow, rowNumber;
-
-            if (typeof this.container != 'undefined') {
-                containerWidth = parseInt(this.container.clientWidth, 10),
+        setLayoutStyles: function () {
+            var containerWidth = parseInt(this.container.clientWidth, 10),
                 rowImages = [],
                 ratio = 0,
                 rowHeight = 0,
@@ -140,35 +138,29 @@ define([
                 isLastRow = false,
                 rowNumber = 1;
 
-                this.setMinRatio();
+            this.setMinRatio();
 
-                this.rows().forEach(function (image, index) {
-                    ratio += parseFloat((image.width / image.height).toFixed(2));
-                    rowImages.push(image);
+            this.rows().forEach(function (image, index) {
+                ratio += parseFloat((image.width / image.height).toFixed(2));
+                rowImages.push(image);
 
-                    if (ratio < this.minRatio && index + 1 !== this.rows().length) {
-                        /**
-                         * Row has more space for images and the image is not the last one -
-                         * Proceed to the next iteration
-                         */
-                        return;
-                    }
+                if (ratio < this.minRatio && index + 1 !== this.rows().length) {
+                    // Row has more space for images and the image is not the last one - proceed to the next iteration
+                    return;
+                }
 
-                    ratio = Math.max(ratio, this.minRatio);
-                    calcHeight = (containerWidth - this.imageMargin * rowImages.length) / ratio;
-                    rowHeight = calcHeight < this.maxImageHeight ? calcHeight : this.maxImageHeight;
-                    isLastRow = index + 1 === this.rows().length;
+                ratio = Math.max(ratio, this.minRatio);
+                calcHeight = (containerWidth - this.imageMargin * rowImages.length) / ratio;
+                rowHeight = calcHeight < this.maxImageHeight ? calcHeight : this.maxImageHeight;
+                isLastRow = index + 1 === this.rows().length;
 
-                    this.assignImagesToRow(rowImages, rowNumber, rowHeight, isLastRow);
+                this.assignImagesToRow(rowImages, rowNumber, rowHeight, isLastRow);
 
-                    rowImages = [];
-                    ratio = 0;
-                    rowNumber++;
+                rowImages = [];
+                ratio = 0;
+                rowNumber++;
 
-                }.bind(this));
-            } else {
-                setTimeout(callback, 0);
-            }
+            }.bind(this));
         },
 
         /**

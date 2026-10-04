@@ -1,6 +1,6 @@
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 define([
@@ -122,7 +122,7 @@ define([
         isFullscreen: false,
         FTCF: '[data-gallery-role="fotorama__fullscreen-icon"]',
         Base: 0, //on check for video is base this setting become true if there is any video with base role
-        MobileMaxWidth: 767,
+        MobileMaxWidth: 768,
         GP: 'gallery-placeholder', //gallery placeholder class is needed to find and erase <script> tag
         videoData: null,
         videoDataPlaceholder: [{
@@ -137,6 +137,16 @@ define([
          * @private
          */
         _create: function () {
+            $(this.element).data('gallery') ?
+                this._onGalleryLoaded() :
+                $(this.element).on('gallery:loaded', this._onGalleryLoaded.bind(this));
+        },
+
+        /**
+         *
+         * @private
+         */
+        _initialize: function () {
             if (!this.defaultVideoData.length) {
                 this.defaultVideoData = this.options.videoData;
             }
@@ -146,14 +156,7 @@ define([
             if (!this.defaultVideoData.length && !this.options.videoData.length) {
                 this.defaultVideoData = this.options.videoData = this.videoDataPlaceholder;
             }
-            this._initializeOnGalleryLoaded();
-        },
 
-        /**
-         *
-         * @private
-         */
-        _initialize: function () {
             this.clearEvents();
 
             if (this._checkForVideoExist()) {
@@ -163,17 +166,6 @@ define([
                 this._initFotoramaVideo();
                 this._attachFotoramaEvents();
             }
-        },
-
-        /**
-         * Initializes after gallery is loaded
-         *
-         * @private
-         */
-        _initializeOnGalleryLoaded: function () {
-            $(this.element).data('gallery') ?
-                this._onGalleryLoaded() :
-                $(this.element).on('gallery:loaded', this._onGalleryLoaded.bind(this));
         },
 
         /**
@@ -211,7 +203,7 @@ define([
             }
 
             this._loadVideoData(options);
-            this._initializeOnGalleryLoaded();
+            this._initialize();
         },
 
         /**
@@ -481,8 +473,7 @@ define([
                 elem.removeClass(this.TI);
             }
 
-            if (this.options.videoData[i] &&
-                this.options.videoData[i].mediaType === this.VID &&
+            if (this.options.videoData[i].mediaType === this.VID &&
                 fotorama.data[i].type ===  this.VID &&
                 fotorama.options.nav === 'thumbs') {
                 elem.addClass(this.TI);

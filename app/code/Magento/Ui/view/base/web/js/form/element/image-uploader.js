@@ -1,6 +1,6 @@
 /**
- * Copyright 2018 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 /* global Base64 */
@@ -11,8 +11,7 @@ define([
     'Magento_Ui/js/modal/alert',
     'Magento_Ui/js/lib/validation/validator',
     'Magento_Ui/js/form/element/file-uploader',
-    'mage/adminhtml/browser',
-    'jquery/jquery-storageapi'
+    'mage/adminhtml/browser'
 ], function ($, _, utils, uiAlert, validator, Element, browser) {
     'use strict';
 
@@ -55,13 +54,7 @@ define([
                 fileSize = $buttonEl.data('size'),
                 fileMimeType = $buttonEl.data('mime-type'),
                 filePathname = $buttonEl.val(),
-                fileBasename = filePathname.split('/').pop(),
-                deletedFiles = $.localStorage.get('deleted_images');
-
-            if (deletedFiles && deletedFiles.indexOf(filePathname) !== -1) {
-                $.localStorage.set('deleted_images', deletedFiles.splice(deletedFiles.indexOf(filePathname), 1));
-                filePathname += '?rand=' + Date.now();
-            }
+                fileBasename = filePathname.split('/').pop();
 
             this.addFile({
                 type: fileMimeType,
@@ -140,7 +133,7 @@ define([
          * @param {Event} e
          */
         triggerImageUpload: function (imageUploader, e) {
-            $(e.target).closest('.file-uploader').find('.uppy-Dashboard-browse').trigger('click');
+            $(e.target).closest('.file-uploader').find('input[type="file"]').trigger('click');
         },
 
         /**

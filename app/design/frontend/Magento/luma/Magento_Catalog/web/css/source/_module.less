@@ -1,6 +1,6 @@
 // /**
-//  * Copyright 2015 Adobe
-//  * All Rights Reserved.
+//  * Copyright © Magento, Inc. All rights reserved.
+//  * See COPYING.txt for license details.
 //  */
 
 @import 'module/_listings.less';
@@ -152,8 +152,15 @@
 
         .additional-attributes {
             width: auto;
-            .lib-table-bordered(@_table_type: clear);
-            .lib-table-resize(@_th-padding-left: 0, @_th-padding-right: @indent__l, @_th-padding-bottom: @indent__s, @_td-padding-bottom: @indent__s);
+            .lib-table-bordered(
+                @_table_type: clear
+            );
+            .lib-table-resize(
+                @_th-padding-left: 0,
+                @_th-padding-right: @indent__l,
+                @_th-padding-bottom: @indent__s,
+                @_td-padding-bottom: @indent__s
+            );
         }
     }
 
@@ -316,7 +323,14 @@
                 .legend {
                     &:after {
                         content: '*';
-                        .lib-typography(@_font-size: @form-field-label-asterisk__font-size, @_color: @form-field-label-asterisk__color, @_font-family: @form-field-label-asterisk__font-family, @_font-weight: @form-field-label-asterisk__font-weight, @_line-height: @form-field-label-asterisk__line-height, @_font-style: @form-field-label-asterisk__font-style);
+                        .lib-typography(
+                        @_font-size: @form-field-label-asterisk__font-size,
+                        @_color: @form-field-label-asterisk__color,
+                        @_font-family: @form-field-label-asterisk__font-family,
+                        @_font-weight: @form-field-label-asterisk__font-weight,
+                        @_line-height: @form-field-label-asterisk__line-height,
+                        @_font-style: @form-field-label-asterisk__font-style
+                        );
                     }
                 }
             }
@@ -420,7 +434,10 @@
 
         .action.tocompare {
             &:extend(.abs-actions-addto all);
-            .lib-icon-font-symbol(@_icon-font-content: @icon-compare-full, @_icon-font-position: before);
+            .lib-icon-font-symbol(
+                @_icon-font-content: @icon-compare-full,
+                @_icon-font-position: before
+            );
         }
     }
 
@@ -600,14 +617,12 @@
     }
 }
 
-/**
- * @codingStandardsIgnoreStart
- */
 //
 //  Mobile @screen__s
 //  _____________________________________________
 
 .media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__s) {
+
     .product-info-price {
         margin: 0 -@indent__s 0;
         width: ~'calc(100% + 2*@{indent__s})' !important;
@@ -627,7 +642,7 @@
         }
     }
 }
-//@codingStandardsIgnoreEnd
+
 //
 //  Desktop
 //  _____________________________________________
@@ -999,10 +1014,6 @@
         display: none;
     }
 
-
-    /**
-     * @codingStandardsIgnoreStart
-     */
     .catalog-product_compare-index {
         .columns {
             .column {
@@ -1012,7 +1023,6 @@
             }
         }
     }
-    //@codingStandardsIgnoreEnd
 }
 
 //
@@ -1026,7 +1036,16 @@
 
         .action.compare {
             line-height: @form-element-input__height;
-            .lib-link(@_link-color: @primary__color, @_link-text-decoration: none, @_link-color-visited: @primary__color, @_link-text-decoration-visited: none, @_link-color-hover: @primary__color, @_link-text-decoration-hover: underline, @_link-color-active: @primary__color, @_link-text-decoration-active: underline);
+            .lib-link(
+                @_link-color: @primary__color,
+                @_link-text-decoration: none,
+                @_link-color-visited: @primary__color,
+                @_link-text-decoration-visited: none,
+                @_link-color-hover: @primary__color,
+                @_link-text-decoration-hover: underline,
+                @_link-color-active: @primary__color,
+                @_link-text-decoration-active: underline
+            );
         }
 
         .counter.qty {
@@ -1077,22 +1096,6 @@
 }
 
 //
-//  For swatch required attribute
-//  _____________________________________________
-.page-product-configurable #product_addtocart_form {
-    .swatch-attribute.required > .swatch-attribute-label:after,
-    .swatch-attribute.required > .label:after {
-        content: '*';
-        color: #e02b27;
-        margin-left: 5px;
-        font-weight: 600;
-    }
-}
-
-/**
- * @codingStandardsIgnoreStart
- */
-//
 //  Desktop large
 //  _____________________________________________
 
@@ -1103,4 +1106,3 @@
         }
     }
 }
-//@codingStandardsIgnoreEnd

@@ -1,6 +1,6 @@
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 /**
@@ -17,7 +17,6 @@ define([
     'use strict';
 
     var cacheKey = 'checkout-data',
-        storeCode = window.checkoutConfig.storeCode,
 
         /**
          * @param {Object} data
@@ -58,20 +57,6 @@ define([
             }
 
             return data;
-        },
-        getShippingAddressByStore = function (shippingAddressObj) {
-            if (!shippingAddressObj) {
-                return null;
-            }
-
-            return shippingAddressObj[storeCode];
-        },
-        setShippingAddressByStore = function (shippingAddressObj, data) {
-            if (!shippingAddressObj) {
-                shippingAddressObj = {};
-            }
-            shippingAddressObj[storeCode] = utils.filterFormData(data);
-            return shippingAddressObj;
         };
 
     return {
@@ -102,9 +87,9 @@ define([
          * @param {Object} data
          */
         setShippingAddressFromData: function (data) {
-            let obj = getData();
+            var obj = getData();
 
-            obj.shippingAddressFromData = setShippingAddressByStore(obj.shippingAddressFromData, data);
+            obj.shippingAddressFromData = utils.filterFormData(data);
             saveData(obj);
         },
 
@@ -114,7 +99,7 @@ define([
          * @return {*}
          */
         getShippingAddressFromData: function () {
-            return getShippingAddressByStore(getData().shippingAddressFromData);
+            return getData().shippingAddressFromData;
         },
 
         /**
@@ -125,7 +110,7 @@ define([
         setNewCustomerShippingAddress: function (data) {
             var obj = getData();
 
-            obj.newCustomerShippingAddress = setShippingAddressByStore(obj.newCustomerShippingAddress, data);
+            obj.newCustomerShippingAddress = data;
             saveData(obj);
         },
 
@@ -135,7 +120,7 @@ define([
          * @return {*}
          */
         getNewCustomerShippingAddress: function () {
-            return getShippingAddressByStore(getData().newCustomerShippingAddress);
+            return getData().newCustomerShippingAddress;
         },
 
         /**

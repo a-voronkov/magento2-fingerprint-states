@@ -1,6 +1,6 @@
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 /**
@@ -44,6 +44,11 @@ define([
                 disposableCustomerData: 'messages'
             });
 
+            // Force to clean obsolete messages
+            if (!_.isEmpty(this.messages().messages)) {
+                customerData.set('messages', {});
+            }
+
             $.mage.cookies.set('mage-messages', '', {
                 samesite: 'strict',
                 domain: ''
@@ -58,11 +63,6 @@ define([
          */
         prepareMessageForHtml: function (message) {
             return escaper.escapeHtml(message, this.allowedTags);
-        },
-        purgeMessages: function () {
-            if (!_.isEmpty(this.messages().messages)) {
-                customerData.set('messages', {});
-            }
         }
     });
 });

@@ -1,6 +1,6 @@
 /**
- * Copyright 2014 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 define([
@@ -47,12 +47,14 @@ define([
          * @return {Boolean} - Prevent default event action and event propagation.
          */
         _selectAllRelated: function (e) {
-            let isChecked = this.options.relatedProductsCheckFlag;
+            var innerHTML = this.options.relatedProductsCheckFlag ?
+                this.options.selectAllMessage : this.options.unselectAllMessage;
 
-            $(e.target).html(isChecked ? this.options.selectAllMessage : this.options.unselectAllMessage);
-            this.options.relatedProductsCheckFlag = !isChecked;
-
-            $(this.options.relatedCheckbox + ':visible').prop('checked', this.options.relatedProductsCheckFlag);
+            $(e.target).html(innerHTML);
+            $(this.options.relatedCheckbox + ':visible').attr(
+                'checked',
+                this.options.relatedProductsCheckFlag = !this.options.relatedProductsCheckFlag
+            );
             this._addRelatedToProduct();
 
             return false;

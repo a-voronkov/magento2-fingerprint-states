@@ -1,6 +1,6 @@
 /**
- * Copyright 2014 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 define([
     'jquery',
@@ -57,9 +57,7 @@ define([
             closeOnMouseLeave: false,
             autoPosition: true,
             closeOnClickOutside: false,
-            classes: {
-                'ui-dialog': 'popup map-popup-wrapper'
-            },
+            'dialogClass': 'popup map-popup-wrapper',
             position: {
                 my: 'left top',
                 collision: 'fit none',

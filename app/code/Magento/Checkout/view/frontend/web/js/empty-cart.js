@@ -1,6 +1,6 @@
 /**
- * Copyright 2019 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 define(['Magento_Customer/js/customer-data'], function (customerData) {

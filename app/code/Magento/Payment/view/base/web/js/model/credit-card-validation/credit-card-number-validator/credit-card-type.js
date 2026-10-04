@@ -1,6 +1,6 @@
 /**
- * Copyright 2016 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 /* @api */
@@ -103,7 +103,7 @@ define([
         {
             title: 'Maestro Domestic',
             type: 'MD',
-            pattern: '^6759(?!24|38|40|6[3-9]|70|76)|676770|676774\\d*$',
+            pattern: '^(6759(?!24|38|40|6[3-9]|70|76)|676770|676774)\\d*$',
             gaps: [4, 8, 12],
             lengths: [12, 13, 14, 15, 16, 17, 18, 19],
             code: {

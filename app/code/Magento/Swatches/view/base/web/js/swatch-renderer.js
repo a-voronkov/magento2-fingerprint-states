@@ -1,6 +1,6 @@
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 define([
@@ -280,7 +280,7 @@ define([
             // tier prise selectors end
 
             // A price label selector
-            normalPriceLabelSelector: '.normal-price .price-label',
+            normalPriceLabelSelector: '.product-info-main .normal-price .price-label',
             qtyInfo: '#qty'
         },
 
@@ -385,7 +385,7 @@ define([
                 isInProductView = false;
 
             productId = this.element.parents('.product-item-details')
-                .find('.price-box.price-final_price').attr('data-product-id');
+                    .find('.price-box.price-final_price').attr('data-product-id');
 
             if (!productId) {
                 // Check individual product.
@@ -443,11 +443,9 @@ define([
                     listLabel = 'aria-labelledby="' + controlLabelId + '"';
                 }
 
-                let checkIsRequiredAttrClass = 'required';
-
                 // Create new control
                 container.append(
-                    '<div class="' + classes.attributeClass + ' ' + item.code + ' ' + checkIsRequiredAttrClass + '" ' +
+                    '<div class="' + classes.attributeClass + ' ' + item.code + '" ' +
                          'data-attribute-code="' + item.code + '" ' +
                          'data-attribute-id="' + item.id + '">' +
                         label +
@@ -800,7 +798,7 @@ define([
 
             $widget._Rebuild();
 
-            if ($priceBox.data('mage-priceBox') !== undefined) {
+            if ($priceBox.is(':data(mage-priceBox)')) {
                 $widget._UpdatePrice();
             }
 
@@ -856,7 +854,7 @@ define([
          */
         _toggleCheckedAttributes: function ($this, $wrapper) {
             $wrapper.attr('aria-activedescendant', $this.attr('id'))
-                .find('.' + this.options.classes.optionClass).attr('aria-checked', false);
+                    .find('.' + this.options.classes.optionClass).attr('aria-checked', false);
             $this.attr('aria-checked', true);
         },
 
@@ -1041,18 +1039,18 @@ define([
                 $(this.options.tierPriceBlockSelector).hide();
             }
 
-            $product.find(this.options.normalPriceLabelSelector).hide();
+            $(this.options.normalPriceLabelSelector).hide();
 
-            _.each(this.element.find('.' + this.options.classes.attributeOptionsWrapper), function (attribute) {
+            _.each($('.' + this.options.classes.attributeOptionsWrapper), function (attribute) {
                 if ($(attribute).find('.' + this.options.classes.optionClass + '.selected').length === 0) {
                     if ($(attribute).find('.' + this.options.classes.selectClass).length > 0) {
                         _.each($(attribute).find('.' + this.options.classes.selectClass), function (dropdown) {
                             if ($(dropdown).val() === '0') {
-                                $product.find(this.options.normalPriceLabelSelector).show();
+                                $(this.options.normalPriceLabelSelector).show();
                             }
                         }.bind(this));
                     } else {
-                        $product.find(this.options.normalPriceLabelSelector).show();
+                        $(this.options.normalPriceLabelSelector).show();
                     }
                 }
             }.bind(this));
@@ -1311,10 +1309,7 @@ define([
                 }
 
                 imagesToUpdate = images.length ? this._setImageType($.extend(true, [], images)) : [];
-                isInitial = _.isEqual(
-                    imagesToUpdate.map(({thumb, img, full, type, videoUrl}) => ({thumb, img, full, type, videoUrl})),
-                    initialImages.map(({thumb, img, full, type, videoUrl}) => ({thumb, img, full, type, videoUrl}))
-                );
+                isInitial = _.isEqual(imagesToUpdate, initialImages);
 
                 if (this.options.gallerySwitchStrategy === 'prepend' && !isInitial) {
                     imagesToUpdate = imagesToUpdate.concat(initialImages);
@@ -1336,13 +1331,7 @@ define([
          * @private
          */
         _addFotoramaVideoEvents: function (isInitial) {
-            if (_.isUndefined($.mage.AddFotoramaVideoEvents)
-                || !$(this.options.mediaGallerySelector).AddFotoramaVideoEvents('instance')
-            ) {
-                $(this.options.mediaGallerySelector).on('addfotoramavideoeventscreate', function () {
-                    this._addFotoramaVideoEvents(isInitial);
-                }.bind(this));
-
+            if (_.isUndefined($.mage.AddFotoramaVideoEvents)) {
                 return;
             }
 

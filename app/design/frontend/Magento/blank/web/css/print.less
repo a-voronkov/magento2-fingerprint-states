@@ -1,10 +1,6 @@
 /**
- * Copyright 2014 Adobe
- * All Rights Reserved.
- */
-
-/**
- * @codingStandardsIgnoreStart
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 @import 'source/lib/_lib.less'; // Global lib
@@ -12,8 +8,6 @@
 @import 'source/_variables.less'; // Local theme variables
 
 @baseDir: '../'; // Default
-
-//  @codingStandardsIgnoreEnd
 
 //  Magento/blank
 .page-print {
@@ -33,6 +27,7 @@
         text-shadow: none !important;
     }
 
+    //  Black prints faster:h5bp.com/s
     a,
     a:visited {
         text-decoration: underline !important;
@@ -81,18 +76,18 @@
     p,
     h2,
     h3 {
-        break-inside: avoid;
+        orphans: 3;
+        widows: 3;
     }
 
     .block-content {
-        break-before: avoid;
+        page-break-before: avoid;
     }
 
     .block-title,
     h2,
     h3 {
-        break-after: avoid;
-        break-inside: avoid;
+        page-break-after: avoid;
     }
 
     .nav-toggle {

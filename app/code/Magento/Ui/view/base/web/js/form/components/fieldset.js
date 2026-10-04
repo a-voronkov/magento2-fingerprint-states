@@ -1,6 +1,6 @@
 /**
- * Copyright 2014 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 /**
@@ -49,7 +49,6 @@ define([
         initConfig: function () {
             this._super();
             this._wasOpened = this.opened || !this.collapsible;
-            this._childrenErrorsCount = 0;
 
             return this;
         },
@@ -86,7 +85,9 @@ define([
             if (this.disabled) {
                 try {
                     elem.disabled(true);
-                } catch (e) {// eslint-disable-line no-unused-vars
+                }
+                catch (e) {
+
                 }
             }
 
@@ -153,17 +154,11 @@ define([
          *
          * @param {String} message - error message.
          */
-        onChildrenError: function (message, child) {
+        onChildrenError: function (message) {
             var hasErrors = false;
 
-            if (child && typeof child === 'object') {
-                hasErrors = this._updateChildrenErrors(message, child);
-            } else if (!message) {
+            if (!message) {
                 hasErrors = this._isChildrenHasErrors(hasErrors, this);
-            }
-
-            if (!message && this._childrenErrorsCount > 0 && hasErrors === false) {
-                hasErrors = this._resyncChildrenErrors(this);
             }
 
             this.error(hasErrors || message);
@@ -171,29 +166,6 @@ define([
             if (hasErrors || message) {
                 this.open();
             }
-        },
-
-        /**
-         * Update cached errors count for child element.
-         *
-         * @param {String} message
-         * @param {Object} child
-         * @return {Boolean}
-         * @private
-         */
-        _updateChildrenErrors: function (message, child) {
-            var hasError = !!message,
-                prevHasError;
-
-            prevHasError = !!child.__uiHasError;
-
-            if (hasError !== prevHasError) {
-                this._childrenErrorsCount += hasError ? 1 : -1;
-                this._childrenErrorsCount = Math.max(0, this._childrenErrorsCount);
-                child.__uiHasError = hasError;
-            }
-
-            return this._childrenErrorsCount > 0;
         },
 
         /**
@@ -218,23 +190,6 @@ define([
                         }
                     });
                 }
-            }
-
-            return hasErrors;
-        },
-
-        /**
-         * Re-sync cached error count with recursive check.
-         *
-         * @param {*} container
-         * @return {Boolean}
-         * @private
-         */
-        _resyncChildrenErrors: function (container) {
-            var hasErrors = this._isChildrenHasErrors(false, container);
-
-            if (!hasErrors) {
-                this._childrenErrorsCount = 0;
             }
 
             return hasErrors;

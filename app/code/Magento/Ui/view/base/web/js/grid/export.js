@@ -1,6 +1,6 @@
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 /**
@@ -106,61 +106,31 @@ define([
         },
 
         /**
-         * Redirect to built option url.
-         */
-        applyOption: function () {
-            const option = this.getActiveOption();
-
-            this.postRequest(option);
-        },
-
-        /**
          * Build option url.
          *
          * @param {Object} option
          * @returns {String}
          */
-        postRequest: function (option) {
-            let params = this.getParams(),
-                data;
+        buildOptionUrl: function (option) {
+            var params = this.getParams();
 
             if (!params) {
                 return 'javascript:void(0);';
             }
 
-            data = $.param(params);
-            $.ajax({
-                url: option.url,
-                type: 'POST',
-                data: data,
-                showLoader: true,
-                xhrFields: {
-                    responseType: 'blob'
-                },
-                success: function (exportedData, status, xhr) {
-                    let a = document.createElement('a'),
-                        blob,
-                        url,
-                        disposition = xhr.getResponseHeader('Content-Disposition'),
-                        matches = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/),
-                        fileName = matches && matches[1] ? matches[1].replace(/['"]/g, '') : '';
+            return option.url + '?' + $.param(params);
+            //TODO: MAGETWO-40250
+        },
 
-                    a.style = 'display: none';
-                    document.body.appendChild(a);
+        /**
+         * Redirect to built option url.
+         */
+        applyOption: function () {
+            var option = this.getActiveOption(),
+                url = this.buildOptionUrl(option);
 
-                    blob = new Blob([exportedData], {
-                        type: 'octet/stream'
-                    });
+            location.href = url;
 
-                    url = window.URL.createObjectURL(blob);
-
-                    a.href = url;
-                    a.download = fileName;
-                    a.click();
-
-                    window.URL.revokeObjectURL(url);
-                }
-            });
         }
     });
 });

@@ -1,6 +1,6 @@
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 
 /**
@@ -153,8 +153,9 @@ define([
             if (xhr.statusText === 'abort') {
                 return;
             }
-            this.trigger('reloaded');
+
             this.set('lastError', true);
+
             this.firstLoad = false;
             this.triggerDataReload = false;
 

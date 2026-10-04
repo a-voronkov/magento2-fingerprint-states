@@ -1,6 +1,6 @@
 /**
- * Copyright 2015 Adobe
- * All Rights Reserved.
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
  */
 define([
     'jquery',
@@ -147,9 +147,9 @@ define([
      */
     function processAdded(node) {
         _.each(watchers.selectors, function (listeners, selector) {
-            for (let data of listeners) {
+            listeners.forEach(function (data) {
                 if (!data.ctx.contains(node) || !$(node, data.ctx).is(selector)) {
-                    continue;
+                    return;
                 }
 
                 if (data.type === 'add') {
@@ -157,7 +157,7 @@ define([
                 } else if (data.type === 'remove') {
                     addRemovalListener(node, data);
                 }
-            }
+            });
         });
     }
 
@@ -170,14 +170,14 @@ define([
         var nodeData    = getNodeData(node),
             listeners   = nodeData && nodeData.remove;
 
-
         if (!listeners) {
             return;
         }
 
-        for (let data of listeners) {
+        listeners.forEach(function (data) {
             trigger(node, data);
-        }
+        });
+
         removeNodeData(node);
     }
 
@@ -194,12 +194,12 @@ define([
 
         nodes = _.toArray(nodes).filter(isElementNode);
 
-        for (let node of nodes) {
+        nodes.forEach(function (node) {
             result.push(node);
 
             children = extractChildren(node);
-            result.push(...children);
-        }
+            result   = result.concat(children);
+        });
 
         return result;
     }
@@ -216,10 +216,10 @@ define([
         var removed = [],
             added = [];
 
-        for (let record of mutations) {
-            removed.push(...record.removedNodes);
-            added.push(...record.addedNodes);
-        }
+        mutations.forEach(function (record) {
+            removed = removed.concat(_.toArray(record.removedNodes));
+            added   = added.concat(_.toArray(record.addedNodes));
+        });
 
         removed = removed.filter(function (node) {
             var addIndex = added.indexOf(node),
@@ -285,16 +285,10 @@ define([
         var changes;
 
         if (shouldObserveMutations(mutations)) {
-            let node;
-
             changes = formChangesLists(mutations);
 
-            for (node of changes.removed) {
-                processRemoved(node);
-            }
-            for (node of changes.added) {
-                processAdded(node);
-            }
+            changes.removed.forEach(processRemoved);
+            changes.added.forEach(processAdded);
         }
     });
 
@@ -337,9 +331,10 @@ define([
 
             nodes = $(selector, data.ctx).toArray();
 
-            for (let node of nodes) {
+            nodes.forEach(function (node) {
                 trigger(node, data);
-            }
+            });
+
             addSelectorListener(selector, data);
         },
 
@@ -371,9 +366,9 @@ define([
                 addSelectorListener(selector, data);
             }
 
-            for (let node of nodes) {
+            nodes.forEach(function (node) {
                 addRemovalListener(node, data);
-            }
+            });
         },
 
         /**
