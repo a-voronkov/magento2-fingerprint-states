@@ -6,7 +6,7 @@
   },
   "require": {
     "php": "~8.2.0||~8.3.0||~8.4.0",
-    "mage-os/framework": "1.3.1"
+    "mage-os/framework": "2.0.0"
   },
   "type": "magento2-theme",
   "license": [
@@ -18,8 +18,8 @@
       "registration.php"
     ]
   },
-  "version": "1.3.1",
+  "version": "2.0.0",
   "replace": {
-    "magento/theme-frontend-blank": "100.4.8-p2"
+    "magento/theme-frontend-blank": "100.4.8-p3"
   }
 }
