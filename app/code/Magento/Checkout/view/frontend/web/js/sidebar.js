@@ -1,5 +1,5 @@
 /**
- * Copyright © 2016 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 /*jshint browser:true jquery:true*/
@@ -77,8 +77,10 @@ define([
                         confirm: function () {
                             self._removeItem($(event.currentTarget));
                         },
-                        always: function (event) {
-                            event.stopImmediatePropagation();
+
+                        /** @inheritdoc */
+                        always: function (e) {
+                            e.stopImmediatePropagation();
                         }
                     }
                 });
@@ -86,6 +88,14 @@ define([
             events['keyup ' + this.options.item.qty] = function (event) {
                 self._showItemButton($(event.target));
             };
+
+            /**
+             * @param {jQuery.Event} event
+             */
+            events['change ' + this.options.item.qty] = function (event) {
+                self._showItemButton($(event.target));
+            };
+
             events['click ' + this.options.item.button] = function (event) {
                 event.stopPropagation();
                 self._updateItemQty($(event.currentTarget));
@@ -177,6 +187,7 @@ define([
 
         _removeItem: function (elem) {
             var itemId = elem.data('cart-item');
+
             this._ajax(this.options.url.remove, {
                 item_id: itemId
             }, elem, this._removeItemAfter);
@@ -185,11 +196,15 @@ define([
         /**
          * Update content after item remove
          *
-         * @param elem
-         * @param response
+         * @param {Object} elem
          * @private
          */
-        _removeItemAfter: function (elem, response) {
+        _removeItemAfter: function (elem) {
+            var productData = customerData.get('cart')().items.find(function (item) {
+                return Number(elem.data('cart-item')) === Number(item['item_id']);
+            });
+
+            $(document).trigger('ajax:removeFromCart', productData['product_sku']);
         },
 
         /**
@@ -224,7 +239,7 @@ define([
 
                         if (msg) {
                             alert({
-                                content: $.mage.__(msg)
+                                content: msg
                             });
                         }
                     }
@@ -246,6 +261,7 @@ define([
                 target = $(this.options.minicart.list),
                 outerHeight;
 
+            self.scrollHeight = 0;
             target.children().each(function () {
 
                 if ($(this).find('.options').length > 0) {
@@ -259,7 +275,7 @@ define([
                 self.scrollHeight += outerHeight;
             });
 
-            target.height(height);
+            target.parent().height(height);
         }
     });
 

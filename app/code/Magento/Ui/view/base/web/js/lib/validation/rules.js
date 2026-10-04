@@ -1,5 +1,5 @@
 /**
- * Copyright © 2016 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 define([
@@ -49,13 +49,13 @@ define([
     return _.mapObject({
         "min_text_length": [
             function (value, params) {
-                return value.length == 0 || value.length >= +params;
+                return _.isUndefined(value) || value.length === 0 || value.length >= +params;
             },
             $.mage.__('Please enter more or equal than {0} symbols.')
         ],
         "max_text_length": [
             function (value, params) {
-                return value.length <= +params;
+                return !_.isUndefined(value) && value.length <= +params;
             },
             $.mage.__('Please enter less or equal than {0} symbols.')
         ],
@@ -194,7 +194,7 @@ define([
         ],
         "time12h": [
             function(value) {
-                return /^((0?[1-9]|1[012])(:[0-5]\d){0,2}(\ [AP]M))$/i.test(value);
+                return /^((0?[1-9]|1[012])(:[0-5]\d){0,2}(\s[AP]M))$/i.test(value);
             },
             $.mage.__('Please enter a valid time, between 00:00 am and 12:00 pm')
         ],
@@ -213,7 +213,7 @@ define([
         ],
         "mobileUK": [
             function(value) {
-                return value.length > 9 && value.match(/^((0|\+44)7(5|6|7|8|9){1}\d{2}\s?\d{6})$/);
+                return value.length > 9 && value.match(/^((0|\+44)7\d{3}\s?\d{6})$/);
             },
             $.mage.__('Please specify a valid mobile number')
         ],
@@ -316,7 +316,7 @@ define([
         ],
         "pattern": [
             function(value, param) {
-                return param.test(value);
+                return new RegExp(param).test(value);
             },
             $.mage.__('Invalid format.')
         ],
@@ -430,10 +430,10 @@ define([
                 var pass = $.trim(v);
                 var result = pass.length >= passwordMinLength;
                 if (result == false) {
-                    validator.passwordErrorMessage = $.mage.__(
-                        "Minimum length of this field must be equal or greater than %1 symbols." +
-                        " Leading and trailing spaces will be ignored."
-                    ).replace('%1', passwordMinLength);
+                    /*eslint-disable max-len*/
+                    validator.passwordErrorMessage = $.mage.__('Minimum length of this field must be equal or greater than %1 symbols. Leading and trailing spaces will be ignored.').replace('%1', passwordMinLength);
+
+                    /*eslint-enable max-len*/
                     return result;
                 }
                 if (pass.match(/\d+/)) {
@@ -450,10 +450,11 @@ define([
                 }
                 if (counter < passwordMinCharacterSets) {
                     result = false;
-                    validator.passwordErrorMessage = $.mage.__(
-                        "Minimum of different classes of characters in password is %1." +
-                        " Classes of characters: Lower Case, Upper Case, Digits, Special Characters."
-                    ).replace('%1', passwordMinCharacterSets);
+
+                    /*eslint-disable max-len*/
+                    validator.passwordErrorMessage = $.mage.__('Minimum of different classes of characters in password is %1. Classes of characters: Lower Case, Upper Case, Digits, Special Characters.').replace('%1', passwordMinCharacterSets);
+
+                    /*eslint-enable max-len*/
                 }
                 return result;
             }, function () {
@@ -572,6 +573,15 @@ define([
             },
             $.mage.__('Please enter a valid number in this field.')
         ],
+        "validate-integer": [
+            function(value) {
+                return (
+                     utils.isEmptyNoTrim(value)
+                      || (!isNaN(utils.parseNumber(value)) && /^\s*-?\d*\s*$/.test(value))
+               );
+             },
+            $.mage.__('Please enter a valid integer in this field.')
+         ],
         "validate-number-range": [
             function(value, param) {
                 if (utils.isEmptyNoTrim(value)) {
@@ -732,7 +742,8 @@ define([
                     }
                 }
                 return true;
-            }, "Please enter valid email addresses, separated by commas. For example, johndoe@domain.com, johnsmith@domain.com."
+            },
+            $.mage.__('Please enter valid email addresses, separated by commas. For example, johndoe@domain.com, johnsmith@domain.com.')
         ],
         "validate-cc-number": [
             /**

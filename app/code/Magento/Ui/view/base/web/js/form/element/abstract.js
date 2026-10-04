@@ -1,5 +1,5 @@
 /**
- * Copyright © 2016 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 
@@ -37,6 +37,7 @@ define([
             showFallbackReset: false,
             additionalClasses: {},
             isUseDefault: '',
+            serviceDisabled: false,
             valueUpdate: false, // ko binding valueUpdate
 
             switcherConfig: {
@@ -52,6 +53,9 @@ define([
                 '${ $.provider }:data.overload': 'overload',
                 '${ $.provider }:${ $.customScope ? $.customScope + "." : ""}data.validate': 'validate',
                 'isUseDefault': 'toggleUseDefault'
+            },
+            ignoreTmpls: {
+                value: true
             },
 
             links: {
@@ -85,7 +89,7 @@ define([
             this._super();
 
             this.observe('error disabled focused preview visible value warn isDifferedFromDefault')
-                .observe('isUseDefault')
+                .observe('isUseDefault serviceDisabled')
                 .observe({
                     'required': !!rules['required-entry']
                 });
@@ -158,16 +162,20 @@ define([
          * @returns {Abstract} Chainable.
          */
         _setClasses: function () {
-            var additional = this.additionalClasses,
-                classes;
+            var additional = this.additionalClasses;
 
-            if (_.isString(additional) && additional.trim().length) {
-                additional = this.additionalClasses.trim().split(' ');
-                classes = this.additionalClasses = {};
+            if (_.isString(additional)){
+                this.additionalClasses = {};
 
-                additional.forEach(function (name) {
-                    classes[name] = true;
-                }, this);
+                if (additional.trim().length) {
+                    additional = additional.trim().split(' ');
+
+                    additional.forEach(function (name) {
+                        if (name.length) {
+                            this.additionalClasses[name] = true;
+                        }
+                    }, this);
+                }
             }
 
             _.extend(this.additionalClasses, {
@@ -201,7 +209,7 @@ define([
         },
 
         /**
-         * Sets 'value' as 'hidden' propertie's value, triggers 'toggle' event,
+         * Sets 'value' as 'hidden' property's value, triggers 'toggle' event,
          * sets instance's hidden identifier in params storage based on
          * 'value'.
          *

@@ -1,14 +1,17 @@
 /**
- * Copyright © 2016 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 define([
     'uiComponent',
     'Magento_Customer/js/customer-data',
     'jquery',
     'ko',
     'underscore',
-    'sidebar'
+    'sidebar',
+    'mage/translate',
+    'mage/dropdown'
 ], function (Component, customerData, $, ko, _) {
     'use strict';
 
@@ -68,14 +71,13 @@ define([
                 'qty': ':input.cart-item-qty',
                 'button': ':button.update-cart-item'
             },
-            'confirmMessage': $.mage.__(
-                'Are you sure you would like to remove this item from the shopping cart?'
-            )
+            'confirmMessage': $.mage.__('Are you sure you would like to remove this item from the shopping cart?')
         });
     }
 
     return Component.extend({
         shoppingCartUrl: window.checkout.shoppingCartUrl,
+        maxItemsToDisplay: window.checkout.maxItemsToDisplay,
         cart: {},
 
         /**
@@ -97,6 +99,9 @@ define([
                 addToCartCalls++;
                 self.isLoading(true);
             });
+            if (cartData().website_id !== window.checkout.websiteId) {
+                customerData.reload(['cart'], false);
+            }
 
             return this._super();
         },
@@ -141,6 +146,7 @@ define([
 
         /**
          * Get cart param by name.
+         *
          * @param {String} name
          * @returns {*}
          */
@@ -152,6 +158,29 @@ define([
             }
 
             return this.cart[name]();
+        },
+
+        /**
+         * Returns array of cart items, limited by 'maxItemsToDisplay' setting.
+         *
+         * @returns []
+         */
+        getCartItems: function () {
+            var items = this.getCartParam('items') || [];
+            items = items.slice(parseInt(-this.maxItemsToDisplay, 10));
+
+            return items;
+        },
+
+        /**
+         * Returns count of cart line items.
+         *
+         * @returns {Number}
+         */
+        getCartLineItemsCount: function () {
+            var items = this.getCartParam('items') || [];
+
+            return parseInt(items.length, 10);
         }
     });
 });

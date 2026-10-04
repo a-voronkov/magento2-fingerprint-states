@@ -1,5 +1,5 @@
 /**
- * Copyright © 2016 Magento. All rights reserved.
+ * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 /*jshint browser:true jquery:true*/
@@ -20,9 +20,12 @@ define([
             $(this.options.cookieAllowButtonSelector).on('click', $.proxy(function() {
                 var cookieExpires = new Date(new Date().getTime() + this.options.cookieLifetime * 1000);
 
-                $.mage.cookies.set(this.options.cookieName, this.options.cookieValue, {expires: cookieExpires});
+                $.mage.cookies.set(this.options.cookieName, JSON.stringify(this.options.cookieValue), {
+                    expires: cookieExpires
+                });
+
                 if ($.mage.cookies.get(this.options.cookieName)) {
-                    window.location.reload();
+                    this.element.hide();
                 } else {
                     window.location.href = this.options.noCookiesUrl;
                 }
