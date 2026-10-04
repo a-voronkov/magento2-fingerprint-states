@@ -57,3 +57,4 @@ Footer,Footer
 "Address Book","Address Book"
 "Account Information","Account Information"
 "Invalid data type","Invalid data type"
+"Query length exceeds maximum allowed length of %1 characters. Actual length: %2 characters.","Query length exceeds maximum allowed length of %1 characters. Actual length: %2 characters."
