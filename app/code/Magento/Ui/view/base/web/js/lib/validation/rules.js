@@ -1,14 +1,15 @@
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 define([
     './utils',
+    'underscore',
     'jquery',
     'jquery/validate',
     'jquery/ui',
     'mage/translate'
-], function (utils, $) {
+], function (utils, _, $) {
     'use strict';
 
     /**
@@ -47,13 +48,13 @@ define([
     return {
         "min_text_length": [
             function (value, params) {
-                return value.length == 0 || value.length >= +params;
+                return _.isUndefined(value) || value.length == 0 || value.length >= +params;
             },
             $.mage.__('Please enter more or equal than {0} symbols.')
         ],
         "max_text_length": [
             function (value, params) {
-                return value.length <= +params;
+                return !_.isUndefined(value) && value.length <= +params;
             },
             $.mage.__('Please enter less or equal than {0} symbols.')
         ],
@@ -668,7 +669,7 @@ define([
                 return true;
             },
             function() {
-                return 'Please enter a value less than or equal to %s.'.replace('%s', this.lteToVal);
+                return $.mage.__('Please enter a value less than or equal to %s.').replace('%s', this.lteToVal);
             }
         ],
         "greater-than-equals-to": [
@@ -680,7 +681,7 @@ define([
                 return true;
             },
             function() {
-                return 'Please enter a value greater than or equal to %s.'.replace('%s', this.gteToVal);
+                return $.mage.__('Please enter a value greater than or equal to %s.').replace('%s', this.gteToVal);
             }
         ],
         "validate-emails": [
@@ -696,7 +697,8 @@ define([
                     }
                 }
                 return true;
-            }, "Please enter valid email addresses, separated by commas. For example, johndoe@domain.com, johnsmith@domain.com."
+            },
+            $.mage.__("Please enter valid email addresses, separated by commas. For example, johndoe@domain.com, johnsmith@domain.com.")
         ],
         "validate-cc-number": [
             /**
@@ -709,7 +711,8 @@ define([
                     return validateCreditCard(value);
                 }
                 return false;
-            }, $.mage.__('Please enter a valid credit card number.')
+            },
+            $.mage.__('Please enter a valid credit card number.')
         ],
         "validate-cc-ukss": [
             /**
@@ -719,17 +722,20 @@ define([
              */
             function(value) {
                 return value;
-            }, $.mage.__('Please enter issue number or start date for switch/solo card type.')
+            },
+            $.mage.__('Please enter issue number or start date for switch/solo card type.')
         ],
         'required-entry': [
             function(value) {
                 return !utils.isEmpty(value);
-            }, $.mage.__('This is a required field.')
+            },
+            $.mage.__('This is a required field.')
         ],
         'checked': [
             function(value) {
                 return value;
-            }, $.mage.__('This is a required field.')
+            },
+            $.mage.__('This is a required field.')
         ],
         'not-negative-amount': [
             function(value) {
@@ -786,6 +792,24 @@ define([
                 return value === $(param).val();
             },
             $.validator.messages.equalTo
+        ],
+        'validate-file-type': [
+            function (name, types) {
+                var extension = name.split('.').pop();
+
+                if (types && typeof types === 'string') {
+                    types = types.split(' ');
+                }
+
+                return !types || !types.length || ~types.indexOf(extension);
+            },
+            $.mage.__('We don\'t recognize or support this file extension type.')
+        ],
+        'validate-max-size': [
+            function (size, maxSize) {
+                return maxSize === false || size < maxSize;
+            },
+            $.mage.__('File you are trying to upload exceeds maximum file size limit.')
         ]
     };
 });

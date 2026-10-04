@@ -1,14 +1,17 @@
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 define([
     './column',
     'jquery',
     'mage/template',
     'text!Magento_Ui/templates/grid/cells/thumbnail/preview.html',
-    'Magento_Ui/js/modal/modal'
-], function (Column, $, mageTemplate, thumbnailPreviewTemplate) {
+    'underscore',
+    'Magento_Ui/js/modal/modal',
+    'mage/translate'
+], function (Column, $, mageTemplate, thumbnailPreviewTemplate, _) {
     'use strict';
 
     return Column.extend({
@@ -28,7 +31,7 @@ define([
             return row[this.index + '_link'];
         },
         getAlt: function (row) {
-            return row[this.index + '_alt']
+            return _.escape(row[this.index + '_alt']);
         },
         isPreviewAvailable: function() {
             return this.has_preview || false;

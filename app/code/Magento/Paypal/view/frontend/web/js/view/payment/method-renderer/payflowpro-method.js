@@ -1,5 +1,5 @@
 /**
- * Copyright © 2015 Magento. All rights reserved.
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
 /*global define*/
@@ -52,18 +52,24 @@ define(
                 var self = this;
 
                 if (this.validateHandler() && additionalValidators.validate()) {
-                    fullScreenLoader.startLoader();
                     this.isPlaceOrderActionAllowed(false);
-                    $.when(setPaymentInformationAction(this.messageContainer, {
-                        'method': self.getCode()
-                    })).done(function () {
-                        self.placeOrderHandler().fail(function () {
+                    fullScreenLoader.startLoader();
+                    $.when(
+                        setPaymentInformationAction(this.messageContainer, {'method': self.getCode()})
+                    ).done(
+                        function () {
+                            self.placeOrderHandler().fail(
+                                function () {
+                                    fullScreenLoader.stopLoader();
+                                }
+                            );
+                        }
+                    ).always(
+                        function () {
+                            self.isPlaceOrderActionAllowed(true);
                             fullScreenLoader.stopLoader();
-                        });
-                    }).fail(function () {
-                        fullScreenLoader.stopLoader();
-                        self.isPlaceOrderActionAllowed(true);
-                    });
+                        }
+                    );
                 }
             }
         });
