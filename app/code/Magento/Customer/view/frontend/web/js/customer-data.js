@@ -24,7 +24,8 @@ define([
         invalidateCacheByCloseCookieSession,
         dataProvider,
         buffer,
-        customerData;
+        customerData,
+        deferred = $.Deferred();
 
     url.setBaseUrl(window.BASE_URL);
     options.sectionLoadUrl = url.build('customer/section/load');
@@ -32,8 +33,7 @@ define([
     //TODO: remove global change, in this case made for initNamespaceStorage
     $.cookieStorage.setConf({
         path: '/',
-        expires: 1,
-        samesite: 'lax'
+        expires: 1
     });
 
     storage = $.initNamespaceStorage('mage-cache-storage').localStorage;
@@ -343,6 +343,15 @@ define([
         },
 
         /**
+         * Checks if customer data is initialized.
+         *
+         * @returns {jQuery.Deferred}
+         */
+        getInitCustomerData: function () {
+            return deferred.promise();
+        },
+
+        /**
          * @param {Object} settings
          * @constructor
          */
@@ -351,6 +360,7 @@ define([
             invalidateCacheBySessionTimeOut(settings);
             invalidateCacheByCloseCookieSession();
             customerData.init();
+            deferred.resolve();
         }
     };
 

@@ -39,10 +39,7 @@ define([
                 customerData.set('messages', {});
             }
 
-            $.mage.cookies.set('mage-messages', '', {
-                samesite: 'strict',
-                domain: ''
-            });
+            $.cookieStorage.set('mage-messages', '');
         },
 
         /**

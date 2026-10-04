@@ -56,9 +56,6 @@ define([
             if (this.options.isMultipleCountriesAllowed) {
                 this.element.parents('div.field').show();
                 this.element.on('change', $.proxy(function (e) {
-                    // clear region inputs on country change
-                    $(this.options.regionListId).val('');
-                    $(this.options.regionInputId).val('');
                     this._updateRegion($(e.target).val());
                 }, this));
 
@@ -160,25 +157,19 @@ define([
                 regionInput = $(this.options.regionInputId),
                 postcode = $(this.options.postcodeId),
                 label = regionList.parent().siblings('label'),
-                container = regionList.parents('div.field'),
-                regionsEntries,
-                regionId,
-                regionData;
+                container = regionList.parents('div.field');
 
             this._clearError();
             this._checkRegionRequired(country);
 
+            $(regionList).find('option:selected').removeAttr('selected');
+            regionInput.val('');
+
             // Populate state/province dropdown list if available or use input box
             if (this.options.regionJson[country]) {
                 this._removeSelectOptions(regionList);
-                regionsEntries = _.pairs(this.options.regionJson[country]);
-                regionsEntries.sort(function (a, b) {
-                    return a[1].name > b[1].name ? 1 : -1;
-                });
-                $.each(regionsEntries, $.proxy(function (key, value) {
-                    regionId = value[0];
-                    regionData = value[1];
-                    this._renderSelectOption(regionList, regionId, regionData);
+                $.each(this.options.regionJson[country], $.proxy(function (key, value) {
+                    this._renderSelectOption(regionList, key, value);
                 }, this));
 
                 if (this.currentRegionOption) {
@@ -202,7 +193,7 @@ define([
                         regionList.hide();
                         container.hide();
                     } else {
-                        regionList.removeAttr('disabled').show();
+                        regionList.show();
                     }
                 }
 

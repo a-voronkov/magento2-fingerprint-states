@@ -157,8 +157,7 @@ define([], function () {
                     attribute = treeWalker.currentNode.attributes[i];
                     nodeName = treeWalker.currentNode.nodeName.toLowerCase();
 
-                    if (this.generallyAllowedAttributes.indexOf(attribute.name) === -1  || // eslint-disable-line max-depth,max-len
-                        this._checkHrefValue(attribute) ||
+                    if (this.generallyAllowedAttributes.indexOf(attribute.name) === -1 || // eslint-disable-line max-depth,max-len
                         this.forbiddenAttributesByElement[nodeName] &&
                         this.forbiddenAttributesByElement[nodeName].indexOf(attribute.name) !== -1
                     ) {
@@ -170,16 +169,6 @@ define([], function () {
             attributesToRemove.forEach(function (attributeToRemove) {
                 attributeToRemove.ownerElement.removeAttribute(attributeToRemove.name);
             });
-        },
-
-        /**
-         * Check that attribute contains script content
-         *
-         * @param {Object} attribute
-         * @private
-         */
-        _checkHrefValue: function (attribute) {
-            return attribute.nodeName === 'href' && attribute.nodeValue.startsWith('javascript');
         }
     };
 });

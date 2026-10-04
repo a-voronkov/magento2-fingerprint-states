@@ -14,9 +14,8 @@ define([
     'Magento_Customer/js/model/customer',
     'Magento_Checkout/js/action/get-totals',
     'Magento_Checkout/js/model/full-screen-loader',
-    'underscore',
-    'Magento_Checkout/js/model/payment/place-order-hooks'
-], function (quote, urlBuilder, storage, errorProcessor, customer, getTotalsAction, fullScreenLoader, _, hooks) {
+    'underscore'
+], function (quote, urlBuilder, storage, errorProcessor, customer, getTotalsAction, fullScreenLoader, _) {
     'use strict';
 
     /**
@@ -38,8 +37,7 @@ define([
 
     return function (messageContainer, paymentData, skipBilling) {
         var serviceUrl,
-            payload,
-            headers = {};
+            payload;
 
         paymentData = filterTemplateData(paymentData);
         skipBilling = skipBilling || false;
@@ -66,12 +64,8 @@ define([
 
         fullScreenLoader.startLoader();
 
-        _.each(hooks.requestModifiers, function (modifier) {
-            modifier(headers, payload);
-        });
-
         return storage.post(
-            serviceUrl, JSON.stringify(payload), true, 'application/json', headers
+            serviceUrl, JSON.stringify(payload)
         ).fail(
             function (response) {
                 errorProcessor.process(response, messageContainer);
