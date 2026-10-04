@@ -18,7 +18,7 @@
     .fieldset {
         .lib-form-fieldset();
         &:last-child {
-            margin-bottom: @indent__base;
+            margin-bottom: 0;
         }
 
         > .field,
@@ -99,18 +99,6 @@
 
     .field-error {
         .lib-form-validation-note();
-    }
-
-    .product-options-wrapper {
-        .date {
-            &.required {
-                div[for*='options'] {
-                    &.mage-error {
-                        display: none !important;
-                    }
-                }
-            }
-        }
     }
 
     .field .tooltip {

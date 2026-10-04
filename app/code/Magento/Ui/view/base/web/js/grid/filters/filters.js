@@ -272,22 +272,11 @@ define([
             }
 
             filter = utils.extend({}, filters.base, filter);
-            //Accepting labels as is.
-            filter.__disableTmpl = {
-                label: 1,
-                options: 1
-            };
 
-            filter = utils.template(filter, {
+            return utils.template(filter, {
                 filters: this,
                 column: column
             }, true, true);
-
-            filter.__disableTmpl = {
-                label: true
-            };
-
-            return filter;
         },
 
         /**
@@ -342,7 +331,7 @@ define([
         },
 
         /**
-         * Finds filters whith a not empty data
+         * Finds filters with a not empty data
          * and sets them to the 'active' filters array.
          *
          * @returns {Filters} Chainable.

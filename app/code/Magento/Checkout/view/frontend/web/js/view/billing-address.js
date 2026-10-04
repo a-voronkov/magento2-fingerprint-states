@@ -17,8 +17,7 @@ define([
     'Magento_Customer/js/customer-data',
     'Magento_Checkout/js/action/set-billing-address',
     'Magento_Ui/js/model/messageList',
-    'mage/translate',
-    'Magento_Checkout/js/model/shipping-rates-validator'
+    'mage/translate'
 ],
 function (
     ko,
@@ -34,8 +33,7 @@ function (
     customerData,
     setBillingAddressAction,
     globalMessageList,
-    $t,
-    shippingRatesValidator
+    $t
 ) {
     'use strict';
 
@@ -73,7 +71,6 @@ function (
             quote.paymentMethod.subscribe(function () {
                 checkoutDataResolver.resolveBillingAddress();
             }, this);
-            shippingRatesValidator.initFields(this.get('name') + '.form-fields');
         },
 
         /**
@@ -201,13 +198,6 @@ function (
                 this.isAddressDetailsVisible(true);
             }
         },
-
-        /**
-         * Manage cancel button visibility
-         */
-        canUseCancelBillingAddress: ko.computed(function () {
-            return quote.billingAddress() || lastSelectedBillingAddress;
-        }),
 
         /**
          * Restore billing address

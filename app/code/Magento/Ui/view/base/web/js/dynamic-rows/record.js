@@ -25,7 +25,7 @@ define([
             },
             listens: {
                 position: 'initPosition',
-                elems: 'setColumnVisibleListener'
+                elems: 'setColumnVisibileListener'
             },
             links: {
                 position: '${ $.name }.${ $.positionProvider }:value'
@@ -123,7 +123,7 @@ define([
         /**
          * Set column visibility listener
          */
-        setColumnVisibleListener: function () {
+        setColumnVisibileListener: function () {
             var elem = _.find(this.elems(), function (curElem) {
                 return !curElem.hasOwnProperty('visibleListener');
             });

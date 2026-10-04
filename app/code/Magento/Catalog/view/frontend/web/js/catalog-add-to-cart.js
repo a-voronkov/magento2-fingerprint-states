@@ -29,13 +29,9 @@ define([
 
         /** @inheritdoc */
         _create: function () {
-            var addToCartButton = $(this.element).find(this.options.addToCartButtonSelector);
-
             if (this.options.bindSubmit) {
                 this._bindSubmit();
             }
-
-            addToCartButton.attr('disabled', false);
         },
 
         /**
@@ -57,12 +53,13 @@ define([
 
         /**
          * @private
-         * @param {String} url
          */
         _redirect: function (url) {
-            var urlParts = url.split('#'),
-                locationParts = window.location.href.split('#'),
-                forceReload = urlParts[0] === locationParts[0];
+            var urlParts, locationParts, forceReload;
+
+            urlParts = url.split('#');
+            locationParts = window.location.href.split('#');
+            forceReload = urlParts[0] === locationParts[0];
 
             window.location.assign(url);
 
@@ -93,10 +90,11 @@ define([
         ajaxSubmit: function (form) {
             var self = this,
                 productIds = idsResolver(form),
-                formData = new FormData(form[0]);
+                formData;
 
             $(self.options.minicartSelector).trigger('contentLoading');
             self.disableAddToCartButton(form);
+            formData = new FormData(form[0]);
 
             $.ajax({
                 url: form.attr('action'),

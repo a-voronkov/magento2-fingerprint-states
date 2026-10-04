@@ -345,22 +345,6 @@
 
             .data.table {
                 &:extend(.abs-checkout-order-review all);
-                &.table-order-review {
-                    > tbody {
-                        > tr {
-                            > td {
-                                &.col {
-                                    &.subtotal {
-                                        border-bottom: none;
-                                    }
-                                    &.qty {
-                                        text-align: center;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
 
@@ -390,7 +374,7 @@
                 text-align: right;
 
                 .action {
-                    margin-left: 0;
+                    margin-left: @indent__s;
 
                     &.back {
                         display: block;
@@ -510,14 +494,6 @@
 
         .logo {
             margin-left: @indent__xl;
-        }
-    }
-    
-    .multicheckout { 
-        .actions-toolbar {
-            > .primary {
-                margin-right: 0;
-            }
         }
     }
 }

@@ -81,7 +81,6 @@ define([
         maxItemsToDisplay: window.checkout.maxItemsToDisplay,
         cart: {},
 
-        // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
         /**
          * @override
          */
@@ -102,16 +101,12 @@ define([
                 self.isLoading(true);
             });
 
-            if (cartData().website_id !== window.checkout.websiteId &&
-                cartData().website_id !== undefined
-            ) {
+            if (cartData()['website_id'] !== window.checkout.websiteId) {
                 customerData.reload(['cart'], false);
             }
 
             return this._super();
         },
-        //jscs:enable requireCamelCaseOrUpperCaseIdentifiers
-
         isLoading: ko.observable(false),
         initSidebar: initSidebar,
 

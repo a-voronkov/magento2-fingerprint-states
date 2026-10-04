@@ -7,27 +7,29 @@
  * @api
  */
 define([
+    'wysiwygAdapter',
     'Magento_Ui/js/lib/view/utils/async',
     'underscore',
     'ko',
     './abstract',
+    'mage/adminhtml/events',
     'Magento_Variable/variables'
-], function ($, _, ko, Abstract) {
+], function (wysiwyg, $, _, ko, Abstract, varienGlobalEvents) {
     'use strict';
 
     return Abstract.extend({
         defaults: {
             elementSelector: 'textarea',
-            suffixRegExpPattern: '${ $.wysiwygUniqueSuffix }',
+            value: '',
             $wysiwygEditorButton: '',
             links: {
                 value: '${ $.provider }:${ $.dataScope }'
             },
             template: 'ui/form/field',
             elementTmpl: 'ui/form/element/wysiwyg',
-            content: '',
-            showSpinner: false,
-            loading: false,
+            content:        '',
+            showSpinner:    false,
+            loading:        false,
             listens: {
                 disabled: 'setDisabled'
             }
@@ -49,27 +51,22 @@ define([
                     this.$wysiwygEditorButton.add($(element)) : $(element);
             }.bind(this));
 
-            return this;
-        },
-
-        /** @inheritdoc */
-        initConfig: function (config) {
-            var pattern = config.suffixRegExpPattern || this.constructor.defaults.suffixRegExpPattern;
-
-            pattern = pattern.replace(/\$/g, '\\$&');
-            config.content = config.content.replace(new RegExp(pattern, 'g'), this.getUniqueSuffix(config));
-            this._super();
+            // disable editor completely after initialization is field is disabled
+            varienGlobalEvents.attachEventHandler('wysiwygEditorInitialized', function () {
+                if (this.disabled()) {
+                    this.setDisabled(true);
+                }
+            }.bind(this));
 
             return this;
         },
 
         /**
-         * Build unique id based on name, underscore separated.
-         *
-         * @param {Object} config
+         * @inheritdoc
          */
-        getUniqueSuffix: function (config) {
-            return config.name.replace(/(\.|-)/g, '_');
+        destroy: function () {
+            this._super();
+            wysiwyg.removeEvents(this.wysiwygId);
         },
 
         /**
@@ -109,23 +106,25 @@ define([
         /**
          * Set disabled property to wysiwyg component
          *
-         * @param {Boolean} status
+         * @param {Boolean} disabled
          */
-        setDisabled: function (status) {
-            if (this.$wysiwygEditorButton) {
-                this.$wysiwygEditorButton.attr('disabled', status);
+        setDisabled: function (disabled) {
+            if (this.$wysiwygEditorButton && disabled) {
+                this.$wysiwygEditorButton.prop('disabled', 'disabled');
+            } else if (this.$wysiwygEditorButton) {
+                this.$wysiwygEditorButton.removeProp('disabled');
             }
 
             /* eslint-disable no-undef */
-            if (tinyMCE && tinyMCE.activeEditor) {
-                _.each(tinyMCE.activeEditor.controlManager.controls, function (property, index, controls) {
-                    controls[property.id].setDisabled(status);
-                });
-
-                tinyMCE.activeEditor.getBody().setAttribute('contenteditable', !status);
+            if (typeof wysiwyg !== 'undefined' && wysiwyg.activeEditor()) {
+                if (wysiwyg && disabled) {
+                    wysiwyg.setEnabledStatus(false);
+                    wysiwyg.getPluginButtons().prop('disabled', 'disabled');
+                } else if (wysiwyg) {
+                    wysiwyg.setEnabledStatus(true);
+                    wysiwyg.getPluginButtons().removeProp('disabled');
+                }
             }
-
-            /* eslint-enable  no-undef*/
         }
     });
 });

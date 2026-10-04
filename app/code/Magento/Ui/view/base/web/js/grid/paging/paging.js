@@ -19,8 +19,7 @@ define([
         defaults: {
             template: 'ui/grid/paging/paging',
             totalTmpl: 'ui/grid/paging-total',
-            totalRecords: 0,
-            pages: 1,
+            pageSize: 20,
             current: 1,
             selectProvider: 'ns = ${ $.ns }, index = ids',
 
@@ -34,24 +33,14 @@ define([
             },
 
             imports: {
+                pageSize: '${ $.sizesConfig.name }:value',
                 totalSelected: '${ $.selectProvider }:totalSelected',
-                totalRecords: '${ $.provider }:data.totalRecords',
-                filters: '${ $.provider }:params.filters'
+                totalRecords: '${ $.provider }:data.totalRecords'
             },
 
             exports: {
                 pageSize: '${ $.provider }:params.paging.pageSize',
                 current: '${ $.provider }:params.paging.current'
-            },
-
-            links: {
-                options: '${ $.sizesConfig.name }:options',
-                pageSize: '${ $.sizesConfig.name }:value'
-            },
-
-            statefull: {
-                pageSize: true,
-                current: true
             },
 
             listens: {
@@ -184,9 +173,7 @@ define([
          * @returns {Paging} Chainable.
          */
         goFirst: function () {
-            if (!_.isUndefined(this.filters)) {
-                this.current = 1;
-            }
+            this.current = 1;
 
             return this;
         },
@@ -232,12 +219,14 @@ define([
         /**
          * Calculates new page cursor based on the
          * previous and current page size values.
+         *
+         * @returns {Number} Updated cursor value.
          */
         updateCursor: function () {
-            var cursor = this.current - 1,
-                size = this.pageSize,
-                oldSize = _.isUndefined(this.previousSize) ? this.pageSize : this.previousSize,
-                delta = cursor * (oldSize - size) / size;
+            var cursor  = this.current - 1,
+                size    = this.pageSize,
+                oldSize = this.previousSize,
+                delta   = cursor * (oldSize  - size) / size;
 
             delta = size > oldSize ?
                 Math.ceil(delta) :

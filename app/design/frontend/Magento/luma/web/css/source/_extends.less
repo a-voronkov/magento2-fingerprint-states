@@ -3,11 +3,11 @@
 //  * See COPYING.txt for license details.
 //  */
 
-@_column-number: 1;
-
 //
 //  List default styles reset
 //  ---------------------------------------------
+
+@_column-number: 1;
 
 & when (@media-common = true) {
     .abs-reset-list {
@@ -1506,10 +1506,6 @@
             position: relative;
             z-index: 1;
         }
-        .limiter {
-            display: inline-block;
-            float: right;
-        }
 
         .toolbar-amount {
             .lib-css(line-height, @pager__line-height);
@@ -1532,7 +1528,6 @@
     .abs-block-items-counter {
         .lib-css(color, @block-items__counter__color);
         .lib-font-size(12px);
-        vertical-align: middle;
         white-space: nowrap;
 
         &:before {
@@ -1556,7 +1551,6 @@
         strong {
             font-size: @font-size__l;
             font-weight: @font-weight__light;
-            vertical-align: middle;
         }
     }
 }

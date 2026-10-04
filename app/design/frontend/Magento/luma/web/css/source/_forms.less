@@ -20,7 +20,7 @@
         .lib-form-fieldset();
 
         &:last-child {
-            margin-bottom: @indent__base;
+            margin-bottom: 0;
         }
 
         > .field,
@@ -98,11 +98,6 @@
         &::-ms-expand {
             display: none;
         }
-
-        .lt-ie10 & {
-            background-image: none;
-            padding-right: 4px;
-        }
     }
 
     select {
@@ -116,18 +111,6 @@
 
     .field-error {
         .lib-form-validation-note();
-    }
-
-    .product-options-wrapper {
-        .date {
-            &.required {
-                div[for*='options'] {
-                    &.mage-error {
-                        display: none !important;
-                    }
-                }
-            }
-        }
     }
 
     //  TEMP

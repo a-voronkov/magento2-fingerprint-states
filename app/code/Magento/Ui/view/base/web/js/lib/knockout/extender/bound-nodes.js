@@ -109,7 +109,7 @@ define([
     wrapper.extend(ko, {
 
         /**
-         * Extends knockouts' 'applyBindings'
+         * Extends kncokouts' 'applyBindings'
          * to track nodes associated with model.
          *
          * @param {Function} orig - Original 'applyBindings' method.
@@ -136,7 +136,7 @@ define([
         },
 
         /**
-         * Extends knockouts' cleanNode
+         * Extends kncokouts' cleanNode
          * to track nodes associated with model.
          *
          * @param {Function} orig - Original 'cleanNode' method.

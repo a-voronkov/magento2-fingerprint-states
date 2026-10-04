@@ -7,30 +7,26 @@
 define([
     'jquery',
     'underscore',
+    'mage/utils/wrapper',
     'Magento_Checkout/js/view/payment/default',
     'Magento_Braintree/js/view/payment/adapter',
-    'braintreePayPal',
-    'braintreePayPalCheckout',
     'Magento_Checkout/js/model/quote',
     'Magento_Checkout/js/model/full-screen-loader',
     'Magento_Checkout/js/model/payment/additional-validators',
     'Magento_Vault/js/view/payment/vault-enabler',
     'Magento_Checkout/js/action/create-billing-address',
-    'Magento_Braintree/js/view/payment/kount',
     'mage/translate'
 ], function (
     $,
     _,
+    wrapper,
     Component,
-    BraintreeAdapter,
-    BraintreePayPal,
-    BraintreePayPalCheckout,
+    Braintree,
     quote,
     fullScreenLoader,
     additionalValidators,
     VaultEnabler,
     createBillingAddress,
-    kount,
     $t
 ) {
     'use strict';
@@ -40,15 +36,10 @@ define([
             template: 'Magento_Braintree/payment/paypal',
             code: 'braintree_paypal',
             active: false,
+            paymentMethodNonce: null,
             grandTotalAmount: null,
             isReviewRequired: false,
-            paypalCheckoutInstance: null,
             customerEmail: null,
-            vaultEnabler: null,
-            paymentPayload: {
-                nonce: null
-            },
-            paypalButtonSelector: '[data-container="paypal-button"]',
 
             /**
              * Additional payment data
@@ -57,40 +48,37 @@ define([
              */
             additionalData: {},
 
+            /**
+             * PayPal client configuration
+             * {Object}
+             */
+            clientConfig: {
+                dataCollector: {
+                    paypal: true
+                },
+
+                /**
+                 * Triggers when widget is loaded
+                 * @param {Object} checkout
+                 */
+                onReady: function (checkout) {
+                    Braintree.checkout = checkout;
+                    this.additionalData['device_data'] = checkout.deviceData;
+                    this.enableButton();
+                    Braintree.onReady();
+                },
+
+                /**
+                 * Triggers on payment nonce receive
+                 * @param {Object} response
+                 */
+                onPaymentMethodReceived: function (response) {
+                    this.beforePlaceOrder(response);
+                }
+            },
             imports: {
                 onActiveChange: 'active'
             }
-        },
-
-        /**
-         * Initialize view.
-         *
-         * @return {exports}
-         */
-        initialize: function () {
-            var self = this;
-
-            self._super();
-
-            BraintreeAdapter.getApiClient().then(function (clientInstance) {
-                return BraintreePayPal.create({
-                    client: clientInstance
-                });
-            }).then(function (paypalCheckoutInstance) {
-                self.paypalCheckoutInstance = paypalCheckoutInstance;
-
-                return self.paypalCheckoutInstance;
-            });
-
-            kount.getDeviceData()
-                .then(function (deviceData) {
-                    self.additionalData['device_data'] = deviceData;
-                });
-
-            // for each component initialization need update property
-            this.isReviewRequired(false);
-
-            return self;
         },
 
         /**
@@ -117,11 +105,9 @@ define([
                 }
             });
 
-            quote.shippingAddress.subscribe(function () {
-                if (self.isActive()) {
-                    self.reInitPayPal();
-                }
-            });
+            // for each component initialization need update property
+            this.isReviewRequired(false);
+            this.initClientConfig();
 
             return this;
         },
@@ -171,13 +157,24 @@ define([
         },
 
         /**
-         * Sets payment payload
-         *
-         * @param {Object} paymentPayload
-         * @private
+         * Init config
          */
-        setPaymentPayload: function (paymentPayload) {
-            this.paymentPayload = paymentPayload;
+        initClientConfig: function () {
+            this.clientConfig = _.extend(this.clientConfig, this.getPayPalConfig());
+
+            _.each(this.clientConfig, function (fn, name) {
+                if (typeof fn === 'function') {
+                    this.clientConfig[name] = fn.bind(this);
+                }
+            }, this);
+        },
+
+        /**
+         * Set payment nonce
+         * @param {String} paymentMethodNonce
+         */
+        setPaymentMethodNonce: function (paymentMethodNonce) {
+            this.paymentMethodNonce = paymentMethodNonce;
         },
 
         /**
@@ -204,69 +201,53 @@ define([
 
         /**
          * Prepare data to place order
-         * @param {Object} payload
+         * @param {Object} data
          */
-        beforePlaceOrder: function (payload) {
-            this.setPaymentPayload(payload);
+        beforePlaceOrder: function (data) {
+            this.setPaymentMethodNonce(data.nonce);
 
             if ((this.isRequiredBillingAddress() || quote.billingAddress() === null) &&
-                typeof payload.details.billingAddress !== 'undefined'
+                typeof data.details.billingAddress !== 'undefined'
             ) {
-                this.setBillingAddress(payload.details, payload.details.billingAddress);
+                this.setBillingAddress(data.details, data.details.billingAddress);
             }
 
             if (this.isSkipOrderReview()) {
                 this.placeOrder();
             } else {
-                this.customerEmail(payload.details.email);
+                this.customerEmail(data.details.email);
                 this.isReviewRequired(true);
             }
         },
 
         /**
          * Re-init PayPal Auth Flow
+         * @param {Function} callback - Optional callback
          */
-        reInitPayPal: function () {
-            var self = this;
+        reInitPayPal: function (callback) {
+            if (Braintree.checkout) {
+                Braintree.checkout.teardown(function () {
+                    Braintree.checkout = null;
+                });
+            }
 
-            $(self.paypalButtonSelector).html('');
+            this.disableButton();
+            this.clientConfig.paypal.amount = this.grandTotalAmount;
+            this.clientConfig.paypal.shippingAddressOverride = this.getShippingAddress();
 
-            return BraintreePayPalCheckout.Button.render({
-                env: this.getEnvironment(),
-                style: {
-                    color: 'blue',
-                    shape: 'rect',
-                    size: 'medium',
-                    label: 'pay',
-                    tagline: false
-                },
+            if (callback) {
+                this.clientConfig.onReady = wrapper.wrap(
+                    this.clientConfig.onReady,
+                    function (original, checkout) {
+                        this.clientConfig.onReady = original;
+                        original(checkout);
+                        callback();
+                    }.bind(this)
+                );
+            }
 
-                /**
-                 * Creates a PayPal payment
-                 */
-                payment: function () {
-                    return self.paypalCheckoutInstance.createPayment(
-                        self.getPayPalConfig()
-                    );
-                },
-
-                /**
-                 * Tokenizes the authorize data
-                 */
-                onAuthorize: function (data) {
-                    return self.paypalCheckoutInstance.tokenizePayment(data)
-                        .then(function (payload) {
-                            self.beforePlaceOrder(payload);
-                        });
-                },
-
-                /**
-                 * Triggers on error
-                 */
-                onError: function () {
-                    self.showError($t('Payment ' + self.getTitle() + ' can\'t be initialized'));
-                }
-            }, self.paypalButtonSelector);
+            Braintree.setConfig(this.clientConfig);
+            Braintree.setup();
         },
 
         /**
@@ -286,7 +267,7 @@ define([
         },
 
         /**
-         * Is billing address required from PayPal side.
+         * Is billing address required from PayPal side
          * @returns {Boolean}
          */
         isRequiredBillingAddress: function () {
@@ -299,22 +280,37 @@ define([
          */
         getPayPalConfig: function () {
             var totals = quote.totals(),
-                config,
+                config = {},
                 isActiveVaultEnabler = this.isActiveVault();
 
-            config = {
-                flow: !isActiveVaultEnabler ? 'checkout' : 'vault',
+            config.paypal = {
+                container: 'paypal-container',
+                singleUse: !isActiveVaultEnabler,
+                headless: true,
                 amount: this.grandTotalAmount,
                 currency: totals['base_currency_code'],
                 locale: this.getLocale(),
                 enableShippingAddress: true,
-                shippingAddressEditable: this.isAllowOverrideShippingAddress()
+
+                /**
+                 * Triggers on any Braintree error
+                 */
+                onError: function () {
+                    this.paymentMethodNonce = null;
+                },
+
+                /**
+                 * Triggers if browser doesn't support PayPal Checkout
+                 */
+                onUnsupported: function () {
+                    this.paymentMethodNonce = null;
+                }
             };
 
-            config.shippingAddressOverride = this.getShippingAddress();
+            config.paypal.shippingAddressOverride = this.getShippingAddress();
 
             if (this.getMerchantName()) {
-                config.displayName = this.getMerchantName();
+                config.paypal.displayName = this.getMerchantName();
             }
 
             return config;
@@ -328,18 +324,18 @@ define([
             var address = quote.shippingAddress();
 
             if (_.isNull(address.postcode) || _.isUndefined(address.postcode)) {
-
                 return {};
             }
 
             return {
-                line1: address.street[0],
-                city: address.city,
-                state: address.regionCode,
+                recipientName: address.firstname + ' ' + address.lastname,
+                streetAddress: address.street[0],
+                locality: address.city,
+                countryCodeAlpha2: address.countryId,
                 postalCode: address.postcode,
-                countryCode: address.countryId,
+                region: address.regionCode,
                 phone: address.telephone,
-                recipientName: address.firstname + ' ' + address.lastname
+                editable: this.isAllowOverrideShippingAddress()
             };
         },
 
@@ -359,7 +355,7 @@ define([
             var data = {
                 'method': this.getCode(),
                 'additional_data': {
-                    'payment_method_nonce': this.paymentPayload.nonce
+                    'payment_method_nonce': this.paymentMethodNonce
                 }
             };
 
@@ -387,13 +383,6 @@ define([
         },
 
         /**
-         * @returns {String}
-         */
-        getEnvironment: function () {
-            return window.checkoutConfig.payment[BraintreeAdapter.getCode()].environment;
-        },
-
-        /**
          * Check if need to skip order review
          * @returns {Boolean}
          */
@@ -413,7 +402,61 @@ define([
          * Re-init PayPal Auth flow to use Vault
          */
         onVaultPaymentTokenEnablerChange: function () {
+            this.clientConfig.paypal.singleUse = !this.isActiveVault();
             this.reInitPayPal();
+        },
+
+        /**
+         * Disable submit button
+         */
+        disableButton: function () {
+            // stop any previous shown loaders
+            fullScreenLoader.stopLoader(true);
+            fullScreenLoader.startLoader();
+            $('[data-button="place"]').attr('disabled', 'disabled');
+        },
+
+        /**
+         * Enable submit button
+         */
+        enableButton: function () {
+            $('[data-button="place"]').removeAttr('disabled');
+            fullScreenLoader.stopLoader();
+        },
+
+        /**
+         * Triggers when customer click "Continue to PayPal" button
+         */
+        payWithPayPal: function () {
+            this.reInitPayPal(function () {
+                if (!additionalValidators.validate()) {
+                    return;
+                }
+
+                try {
+                    Braintree.checkout.paypal.initAuthFlow();
+                } catch (e) {
+                    this.messageContainer.addErrorMessage({
+                        message: $t('Payment ' + this.getTitle() + ' can\'t be initialized.')
+                    });
+                }
+            }.bind(this));
+        },
+
+        /**
+         * Get button title
+         * @returns {String}
+         */
+        getButtonTitle: function () {
+            return this.isSkipOrderReview() ? 'Pay with PayPal' : 'Continue to PayPal';
+        },
+
+        /**
+         * Get button id
+         * @returns {String}
+         */
+        getButtonId: function () {
+            return this.getCode() + (this.isSkipOrderReview() ? '_pay_with' : '_continue_to');
         }
     });
 });

@@ -9,9 +9,8 @@
 define([
     'mage/url',
     'Magento_Ui/js/model/messageList',
-    'consoleLogger',
     'mage/translate'
-], function (url, globalMessageList, consoleLogger, $t) {
+], function (url, globalMessageList, $t) {
     'use strict';
 
     return {
@@ -29,11 +28,8 @@ define([
             } else {
                 try {
                     error = JSON.parse(response.responseText);
-                } catch (e) {
-                    consoleLogger.error(e);
-                    error = {
-                        message: $t('Something went wrong with your request. Please try again later.')
-                    };
+                } catch (exception) {
+                    error = $t('Something went wrong with your request. Please try again later.');
                 }
                 messageContainer.addErrorMessage(error);
             }

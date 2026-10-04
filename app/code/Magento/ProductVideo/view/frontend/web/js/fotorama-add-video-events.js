@@ -139,6 +139,7 @@ define([
          */
         _create: function () {
             $(this.element).on('gallery:loaded',  $.proxy(function () {
+                this.fotoramaItem = $(this.element).find('.fotorama-item');
                 this._initialize();
             }, this));
         },
@@ -158,7 +159,6 @@ define([
                 this.defaultVideoData = this.options.videoData = this.videoDataPlaceholder;
             }
 
-            this.fotoramaItem = $(this.element).find('.fotorama-item');
             this.clearEvents();
 
             if (this._checkForVideoExist()) {
@@ -169,8 +169,6 @@ define([
                 this._initFotoramaVideo();
                 this._attachFotoramaEvents();
             }
-
-            this.element.trigger('AddFotoramaVideoEvents:loaded');
         },
 
         /**
@@ -179,14 +177,12 @@ define([
          * @private
          */
         clearEvents: function () {
-            if (this.fotoramaItem !== undefined) {
-                this.fotoramaItem.off(
-                    'fotorama:show.' + this.PV +
-                    ' fotorama:showend.' + this.PV +
-                    ' fotorama:fullscreenenter.' + this.PV +
-                    ' fotorama:fullscreenexit.' + this.PV
-                );
-            }
+            this.fotoramaItem.off(
+                'fotorama:show.' + this.PV +
+                ' fotorama:showend.' + this.PV +
+                ' fotorama:fullscreenenter.' + this.PV +
+                ' fotorama:fullscreenexit.' + this.PV
+            );
         },
 
         /**

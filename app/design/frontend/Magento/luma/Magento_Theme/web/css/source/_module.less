@@ -62,13 +62,6 @@
 //  Common
 //  _____________________________________________
 
-.page-wrapper {
-    .ie9 & {
-        .lib-css(background-color, @page__background-color);
-        min-height: 0;
-    }
-}
-
 & when (@media-common = true) {
     body {
         .lib-css(background-color, @page__background-color);
@@ -148,12 +141,6 @@
         .page-print & {
             display: inline-block;
             float: none;
-        }
-    }
-
-    .page-print {
-        .nav-toggle {
-            display: none;
         }
     }
 
@@ -325,23 +312,6 @@
             }
         }
     }
-    .page-header {
-        .switcher {
-            .options {
-                ul.dropdown {
-                    right: 0;
-                    &:before {
-                        left: auto;
-                        right: 10px;
-                    }
-                    &:after {
-                        left: auto;
-                        right: 9px;
-                    }
-                }
-            }
-        }
-    }
 
     //
     //  Widgets
@@ -365,6 +335,7 @@
         .widget.block {
             .lib-css(margin, @indent__base 0);
         }
+
         .links .widget.block {
             margin: 0;
         }
@@ -464,7 +435,7 @@
 
 .media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
     .cms-page-view .page-main {
-        padding-top: 0;
+        padding-top: 41px;
         position: relative;
     }
 }
@@ -477,12 +448,6 @@
     html,
     body {
         height: 100%; // Stretch screen area for sticky footer
-    }
-
-    body {
-        .ie9 & {
-            .lib-css(background-color, @copyright__background-color);
-        }
     }
 
     .navigation ul {
@@ -661,6 +626,10 @@
         > .widget {
             box-sizing: border-box;
             width: 100%;
+        }
+
+        .ie11 & {
+            height: 100%;
         }
     }
 

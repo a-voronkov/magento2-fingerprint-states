@@ -177,10 +177,10 @@
 .media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
     .products-grid.wishlist {
         margin-bottom: @indent__l;
-        margin-right: 0;
+        margin-right: -@indent__s;
         .product {
             &-item {
-                padding: @indent__base 0 @indent__base 0;
+                padding: @indent__base @indent__s @indent__base @indent__base;
                 position: relative;
 
                 &-photo {
@@ -194,7 +194,6 @@
 
                 &-actions {
                     display: block;
-                    float: left;
 
                     .action {
                         margin-right: 15px;

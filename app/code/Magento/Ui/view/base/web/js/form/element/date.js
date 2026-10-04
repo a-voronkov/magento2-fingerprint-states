@@ -36,18 +36,6 @@ define([
             inputDateFormat: 'y-MM-dd',
 
             /**
-             * Format of date that comes from the
-             * server (ICU Date Format).
-             *
-             * Used only in date/time picker mode
-             * (this.options.showsTime == false).
-             *
-             * @type {String}
-             * @deprecated
-             */
-            inputDateTimeFormat: 'y-MM-dd h:mm',
-
-            /**
              * Format of date that should be sent to the
              * server (ICU Date Format).
              *
@@ -57,27 +45,6 @@ define([
              * @type {String}
              */
             outputDateFormat: 'MM/dd/y',
-
-            /**
-             * Format of date that should be sent to the
-             * server (ICU Date Format).
-             *
-             * Used only in datetime picker mode with disabled ISO format.
-             * (this.options.showsTime == true, this.options.outputDateTimeToISO == false)
-             *
-             * @type {String}
-             * @deprecated
-             */
-            outputDateTimeFormat: '',
-
-            /**
-             * Converts output date/time to ISO string
-             *
-             * Used only in datetime picker mode
-             * (this.options.showsTime == false)
-             * @deprecated
-             */
-            outputDateTimeToISO: true,
 
             /**
              * Date/time format that is used to display date in
@@ -147,18 +114,18 @@ define([
          * @param {String} value
          */
         onValueChange: function (value) {
-            var shiftedValue;
+            var dateFormat,
+                shiftedValue;
 
             if (value) {
                 if (this.options.showsTime) {
                     shiftedValue = moment.tz(value, 'UTC').tz(this.storeTimeZone);
                 } else {
-                    shiftedValue = moment(value, this.outputDateFormat);
+                    dateFormat = this.shiftedValue() ? this.outputDateFormat : this.inputDateFormat;
+
+                    shiftedValue = moment(value, dateFormat);
                 }
 
-                if (!shiftedValue.isValid()) {
-                    shiftedValue = moment(value, this.inputDateFormat);
-                }
                 shiftedValue = shiftedValue.format(this.pickerDateTimeFormat);
             } else {
                 shiftedValue = '';

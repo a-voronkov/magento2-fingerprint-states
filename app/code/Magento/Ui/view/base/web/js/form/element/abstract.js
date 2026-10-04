@@ -296,7 +296,7 @@ define([
                 this.validation[rule] = options;
             }
 
-            changed = !utils.compare(rules, this.validation).equal;
+            changed = utils.compare(rules, this.validation).equal;
 
             if (changed) {
                 this.required(!!rules['required-entry']);
@@ -408,11 +408,10 @@ define([
                 isValid = this.disabled() || !this.visible() || result.passed;
 
             this.error(message);
-            this.error.valueHasMutated();
             this.bubble('error', message);
 
             //TODO: Implement proper result propagation for form
-            if (!isValid) {
+            if (this.source && !isValid) {
                 this.source.set('params.invalid', true);
             }
 

@@ -5,43 +5,27 @@
 
 define([
     'uiComponent',
-    'Magento_Customer/js/customer-data',
-    'underscore'
-], function (Component, customerData, _) {
+    'Magento_Customer/js/customer-data'
+], function (Component, customerData) {
     'use strict';
 
     return Component.extend({
-        defaults: {
-            isShowAddToCart: false
-        },
-
         /** @inheritdoc */
         initialize: function () {
+            var isShowAddToCart = false,
+                item;
+
             this._super();
             this.lastOrderedItems = customerData.get('last-ordered-items');
-            this.lastOrderedItems.subscribe(this.checkSalableItems.bind(this));
-            this.checkSalableItems();
 
-            return this;
-        },
+            for (item in this.lastOrderedItems.items) {
+                if (item['is_saleable']) {
+                    isShowAddToCart = true;
+                    break;
+                }
+            }
 
-        /** @inheritdoc */
-        initObservable: function () {
-            this._super()
-                .observe('isShowAddToCart');
-
-            return this;
-        },
-
-        /**
-         * Check if items is_saleable and change add to cart button visibility.
-         */
-        checkSalableItems: function () {
-            var isShowAddToCart = _.some(this.lastOrderedItems().items, {
-                'is_saleable': true
-            });
-
-            this.isShowAddToCart(isShowAddToCart);
+            this.lastOrderedItems.isShowAddToCart = isShowAddToCart;
         }
     });
 });

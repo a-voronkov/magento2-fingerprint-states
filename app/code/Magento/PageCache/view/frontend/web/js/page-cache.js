@@ -6,10 +6,9 @@
 define([
     'jquery',
     'domReady',
-    'consoleLogger',
     'jquery/ui',
     'mage/cookies'
-], function ($, domReady, consoleLogger) {
+], function ($, domReady) {
     'use strict';
 
     /**
@@ -42,9 +41,7 @@ define([
          * @param {jQuery} element - Comment holder
          */
         (function lookup(element) {
-            var iframeHostName,
-                contents,
-                elementContents;
+            var iframeHostName;
 
             // prevent cross origin iframe content reading
             if ($(element).prop('tagName') === 'IFRAME') {
@@ -56,30 +53,7 @@ define([
                 }
             }
 
-            /**
-             * Rewrite jQuery contents method
-             *
-             * @param {Object} el
-             * @returns {Object}
-             * @private
-             */
-            contents = function (el) {
-                return $.map(el, function (elem) {
-                    try {
-                        return $.nodeName(elem, 'iframe') ?
-                               elem.contentDocument || (elem.contentWindow ? elem.contentWindow.document : []) :
-                               $.merge([], elem.childNodes);
-                    } catch (e) {
-                        consoleLogger.error(e);
-
-                        return [];
-                    }
-                });
-            };
-
-            elementContents = contents($(element));
-
-            $.each(elementContents, function (index, el) {
+            $(element).contents().each(function (index, el) {
                 switch (el.nodeType) {
                     case 1: // ELEMENT_NODE
                         lookup(el);

@@ -71,7 +71,8 @@ define([
                     this.isExpandable = true;
                 }.bind(this),
                 exit: function () {
-                    this.isExpandable = true;
+                    this.isExpandable = false;
+                    this.element.removeAttr('aria-expanded');
                 }.bind(this)
             });
 
@@ -128,16 +129,11 @@ define([
          * @param {Boolean} isActive
          */
         setActiveState: function (isActive) {
-            var searchValue;
-
             this.searchForm.toggleClass('active', isActive);
             this.searchLabel.toggleClass('active', isActive);
 
             if (this.isExpandable) {
                 this.element.attr('aria-expanded', isActive);
-                searchValue = this.element.val();
-                this.element.val('');
-                this.element.val(searchValue);
             }
         },
 
@@ -310,13 +306,12 @@ define([
                             dropdown.append(html);
                         });
 
-                        this._resetResponseList(true);
-
                         this.responseList.indexList = this.autoComplete.html(dropdown)
                             .css(clonePosition)
                             .show()
                             .find(this.options.responseFieldElements + ':visible');
 
+                        this._resetResponseList(false);
                         this.element.removeAttr('aria-activedescendant');
 
                         if (this.responseList.indexList.length) {
@@ -343,11 +338,6 @@ define([
                                     this._resetResponseList(false);
                                 }
                             }.bind(this));
-                    } else {
-                        this._resetResponseList(true);
-                        this.autoComplete.hide();
-                        this._updateAriaHasPopup(false);
-                        this.element.removeAttr('aria-activedescendant');
                     }
                 }, this));
             } else {

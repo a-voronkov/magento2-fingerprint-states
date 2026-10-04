@@ -7,8 +7,7 @@
  */
 define([
     'ko',
-    'underscore',
-    'domReady!'
+    'underscore'
 ], function (ko, _) {
     'use strict';
 
