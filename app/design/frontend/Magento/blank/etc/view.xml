@@ -287,11 +287,11 @@
         <item type="directory">Magento_Ui::templates/grid</item>
         <item type="directory">Magento_Ui::templates/dynamic-rows</item>
         <item type="directory">Magento_Swagger::swagger-ui</item>
-        <item type="directory">Lib::hugerte</item>
+        <item type="directory">Lib::tiny_mce</item>
         <item type="directory">Lib::varien</item>
         <item type="directory">Lib::jquery/editableMultiselect</item>
         <item type="directory">Lib::jquery/jstree</item>
-        <item type="directory">Lib::jquery/fileUploader</item>
+        <item type="directory">Lib::jquery/uppy</item>
         <item type="directory">Lib::css</item>
         <item type="directory">Lib::lib</item>
         <item type="directory">Lib::extjs</item>
